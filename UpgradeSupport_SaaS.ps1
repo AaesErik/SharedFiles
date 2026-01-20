@@ -1,3 +1,44 @@
+#
+# REMEMBER SECERTS AND VARIABLES
+# Settings, Secret and Variables, Actions - Secrets / Variables
+# Secrets: CLIENT_ID, CLIENT_SECRET, TENANT_ID
+# Variables: CUSTOMER_NAME((DK) ABC SaaS), ENVIRONMENTS(Production,TestRelease,TestUpgrade)
+#
+<#
+UpgradeSupport_SaaS.ps1
+
+Collects installed Business Central extensions for a given customer
+and environment, exports the data to CSV, and uploads to FTP.
+
+--------------------------------------
+GitHub Actions configuration:
+
+Settings, Secret and Variables, Actions
+Secrets (sensitive):
+- CLIENT_ID
+- CLIENT_SECRET
+- TENANT_ID
+
+Settings, Secret and Variables, Actions
+Variables (non-sensitive):
+- CUSTOMER_NAME      e.g. (DK) ABC SaaS
+- ENVIRONMENTS       e.g. Production,TestRelease,TestUpgrade
+
+--------------------------------------
+Script parameters:
+- ClientID
+- ClientSecret
+- TenantId
+- CustomerName
+- Environment
+
+Usage:
+- Typically executed in a loop per environment from GitHub Actions
+- CSV output: C:\BCSaaS Play\<CustomerName>.<Environment>.csv
+- FTP upload included
+
+#>
+
 param(
     [Parameter(Mandatory=$true)] $ClientID,
     [Parameter(Mandatory=$true)] $ClientSecret,

@@ -1,0 +1,45 @@
+name: Upgrade Support SaaS
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Kør hver nat kl 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  upgrade:
+    runs-on: windows-latest
+
+    env:
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      TENANT_ID: ${{ secrets.TENANT_ID }}
+      CUSTOMER_NAME: ${{ vars.CUSTOMER_NAME }} 
+      ENVIRONMENTS: ${{ vars.ENVIRONMENTS }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Hent script
+        run: |
+          Invoke-WebRequest `
+            -Uri "https://raw.githubusercontent.com/AaesErik/SharedFiles/main/UpgradeSupport_SaaS.ps1" `
+            -OutFile "./UpgradeSupport_SaaS.ps1"
+
+      - name: Kør script for alle miljøer
+        run: |
+          # Split ENVIRONMENTS CSV til array
+          $environments = $env:ENVIRONMENTS -split ','
+
+          foreach ($envName in $environments) {
+              Write-Host "Starter UpgradeSupport_SaaS for $envName"
+
+              pwsh ./UpgradeSupport_SaaS.ps1 `
+                -ClientID $env:CLIENT_ID `
+                -ClientSecret $env:CLIENT_SECRET `
+                -TenantId $env:TENANT_ID `
+                -CustomerName $env:CUSTOMER_NAME `
+                -Environment $envName
+
+              Write-Host "Færdig med $envName"
+          }
