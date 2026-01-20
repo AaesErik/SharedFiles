@@ -1,3 +1,11 @@
+#
+# REMEMBER SECERTS AND VARIABLES
+# Settings, Secret and Variables, Actions - Secrets / Variables
+# Secrets: CLIENT_ID, CLIENT_SECRET, TENANT_ID
+# Variables: CUSTOMER_NAME((DK) ABC SaaS), ENVIRONMENTS(Production,TestRelease,TestUpgrade)
+#
+
+
 name: Upgrade Support SaaS
 
 on:
@@ -23,8 +31,8 @@ jobs:
       - name: Hent script
         run: |
           Invoke-WebRequest `
-            -Uri "https://raw.githubusercontent.com/AaesErik/SharedFiles/main/UpgradeSupport_SaaS.ps1" `
-            -OutFile "./UpgradeSupport_SaaS.ps1"
+            -Uri "https://raw.githubusercontent.com/AaesErik/SharedFiles/main/UpgradeSupport-SaaS.ps1" `
+            -OutFile "./UpgradeSupport-SaaS.ps1"
 
       - name: Kør script for alle miljøer
         run: |
@@ -32,9 +40,9 @@ jobs:
           $environments = $env:ENVIRONMENTS -split ','
 
           foreach ($envName in $environments) {
-              Write-Host "Starter UpgradeSupport_SaaS for $envName"
+              Write-Host "Starter UpgradeSupport-SaaS for $envName"
 
-              pwsh ./UpgradeSupport_SaaS.ps1 `
+              pwsh ./UpgradeSupport-SaaS.ps1 `
                 -ClientID $env:CLIENT_ID `
                 -ClientSecret $env:CLIENT_SECRET `
                 -TenantId $env:TENANT_ID `

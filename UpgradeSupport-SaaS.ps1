@@ -1,9 +1,3 @@
-#
-# REMEMBER SECERTS AND VARIABLES
-# Settings, Secret and Variables, Actions - Secrets / Variables
-# Secrets: CLIENT_ID, CLIENT_SECRET, TENANT_ID
-# Variables: CUSTOMER_NAME((DK) ABC SaaS), ENVIRONMENTS(Production,TestRelease,TestUpgrade)
-#
 <#
 UpgradeSupport_SaaS.ps1
 
