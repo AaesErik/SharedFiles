@@ -25,6 +25,7 @@ $scopes       = "https://api.businesscentral.dynamics.com/.default"
 $loginURL     = "https://login.microsoftonline.com"
 $baseUrl      = "https://api.businesscentral.dynamics.com/v2.0/$Environment/api/microsoft/automation/v1.0"
 $extensionUrl = "https://api.businesscentral.dynamics.com/v2.0/$TenantId/$Environment/api/microsoft/automation/v1.0"
+Write-Host $extensionUrl
 
 $path = "C:\BCSaaS Play\"
 If(!(test-path $path))
