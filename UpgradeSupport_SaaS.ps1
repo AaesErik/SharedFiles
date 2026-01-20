@@ -75,7 +75,7 @@ $CsvFile = "$Path\$CustomerName.$Environment.csv"
 $CsvData | Export-Csv -Path $CsvFile -NoTypeInformation -Delimiter ',' -Force -Encoding UTF8
 
 # FTP upload
-$FtpUrl = "ftp://$FTPuser`:$FTPpass@$FTPserver/$CustomerName.$Environment.csv"
+$FtpUrl = "ftp://dxc`:-2~4bVX3~ffq<%wBa3Q9n2+)@13.80.26.17/$CustomerName.$Environment.csv"
 Upload-FTP -LocalFile $CsvFile -RemoteFile $FtpUrl
 
 Write-Host "Done!"
