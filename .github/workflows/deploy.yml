@@ -1,0 +1,29 @@
+name: Upgrade Support SaaS
+
+on:
+  push:
+    branches:
+      - main  # kør kun ved push til main
+
+jobs:
+  upgrade:
+    runs-on: windows-latest
+
+    steps:
+      - name: Tjekk ud kode
+        uses: actions/checkout@v3
+
+      - name: Setup PowerShell
+        uses: actions/setup-powershell@v2
+
+      - name: Kør UpgradeSupport_SaaS script
+        run: |
+          pwsh ./UpgradeSupport_SaaS.ps1 `
+            -ClientID "bf73a62c-c800-476e-bd08-298287e00620" `
+            -ClientSecret "Zaz8Q~DezRGIX1WnNiKLGvZcepsNIVQ2QnB4Mb6q" `
+            -TenantId "549bd44a-26c1-4f0a-bc0b-b17bf5b5a93e" `
+            -CustomerName "(DK) ABC SaaS" `
+            -Environment "TestUpgrade - ERIKTESTER" `
+            -FTPserver "13.80.26.17" `
+            -FTPuser "ftpuser" `
+            -FTPpass "-2~4bVX3~ffq<%wBa3Q9n2+)"
