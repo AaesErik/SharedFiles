@@ -20,7 +20,7 @@ jobs:
             -ClientSecret 'Zaz8Q~DezRGIX1WnNiKLGvZcepsNIVQ2QnB4Mb6q' `
             -TenantId '549bd44a-26c1-4f0a-bc0b-b17bf5b5a93e' `
             -CustomerName '(DK) ABC SaaS' `
-            -Environment 'TestUpgrade - ERIKTESTER' `
+            -Environment 'TestUpgrade' `
             -FTPserver '13.80.26.17' `
             -FTPuser 'dxc' `
             -FTPpass '-2~4bVX3~ffq<%wBa3Q9n2+)'
