@@ -57,12 +57,12 @@ $Extensions = Invoke-BCAPI -Uri "$ExtensionUrl/companies($CompanyId)/extensions"
 $Date = Get-Date -Format "yyyy-MM-dd HH:mm"
 $CsvData = $Extensions.value | ForEach-Object {
     [PSCustomObject]@{
-        APPName     = $_.displayName
-        Publisher   = $_.publisher
-        Version     = "$($_.versionMajor).$($_.versionMinor).$($_.versionBuild).$($_.versionRevision)"
-        IsInstalled = $_.isInstalled
-        PublishedAs = $_.publishedAs
-        packageId   = $_.id
+        APPName      = $_.displayName
+        Publisher    = $_.publisher
+        Version      = "$($_.versionMajor).$($_.versionMinor).$($_.versionBuild).$($_.versionRevision)"
+        IsInstalled  = $_.isInstalled
+        publishedAs  = $_.publishedAs
+        packageId    = $_.id
         CustomerName = $CustomerName
         Environment  = $Environment
         DateTime     = $Date
@@ -70,7 +70,9 @@ $CsvData = $Extensions.value | ForEach-Object {
 } | Sort-Object Publisher, APPName
 
 $CsvFile = "$Path\$CustomerName.$Environment.csv"
-$CsvData | Export-Csv -Path $CsvFile -NoTypeInformation -Delimiter ';'
+
+# Eksporter CSV med komma og citater omkring alle felter
+$CsvData | Export-Csv -Path $CsvFile -NoTypeInformation -Delimiter ',' -Force -Encoding UTF8
 
 # FTP upload
 $FtpUrl = "ftp://$FTPuser`:$FTPpass@$FTPserver/$CustomerName.$Environment.csv"
