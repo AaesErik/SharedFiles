@@ -3,10 +3,7 @@ param(
     [Parameter(Mandatory=$true)] $ClientSecret,
     [Parameter(Mandatory=$true)] $TenantId,
     [Parameter(Mandatory=$true)] $CustomerName,
-    [Parameter(Mandatory=$true)] $Environment,
-    [Parameter(Mandatory=$true)] $FTPserver,
-    [Parameter(Mandatory=$true)] $FTPuser,
-    [Parameter(Mandatory=$true)] $FTPpass
+    [Parameter(Mandatory=$true)] $Environment
 )
 
 # --- Konstanter ---
