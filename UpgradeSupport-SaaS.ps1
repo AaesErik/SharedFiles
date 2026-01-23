@@ -2,21 +2,18 @@
 UpgradeSupport_SaaS.ps1
 
 Collects installed Business Central extensions for a given customer
-and environment, exports the data to CSV, and uploads to FTP.
+and environment, exports the data to CSV, and uploads it to FTP.
 
 --------------------------------------
 GitHub Actions configuration:
 
-Settings, Secret and Variables, Actions
-Secrets (sensitive):
+Variables (non-sensitive):
 - CLIENT_ID
 - CLIENT_SECRET
 - TENANT_ID
-
-Settings, Secret and Variables, Actions
-Variables (non-sensitive):
 - CUSTOMER_NAME      e.g. (DK) ABC SaaS
 - ENVIRONMENTS       e.g. Production,TestRelease,TestUpgrade
+- RUN_APPREGISTRATIONS (true/false) - depending on whether to run AppRegistrations.ps1 and Application.Read.All permissions
 
 --------------------------------------
 Script parameters:
@@ -41,7 +38,9 @@ param(
     [Parameter(Mandatory=$true)] $Environment
 )
 
-# --- Konstanter ---
+# ===============================
+# Constants
+# ===============================
 $Scopes       = "https://api.businesscentral.dynamics.com/.default"
 $LoginURL     = "https://login.microsoftonline.com/$TenantId/oauth2/v2.0/token"
 $BaseUrl      = "https://api.businesscentral.dynamics.com/v2.0/$Environment/api/microsoft/automation/v1.0"
@@ -49,7 +48,9 @@ $ExtensionUrl = "https://api.businesscentral.dynamics.com/v2.0/$TenantId/$Enviro
 $Path         = "C:\BCSaaS Play\"
 If (!(Test-Path $Path)) { New-Item -Path $Path -ItemType Directory -Force }
 
-# --- Funktioner ---
+# ===============================
+# Functions
+# ===============================# Get access token from Azure AD
 function Get-AccessToken {
     param($ClientID, $ClientSecret)
     $Body = @{
@@ -61,11 +62,13 @@ function Get-AccessToken {
     Invoke-RestMethod -Method Post -Uri $LoginURL -Body $Body
 }
 
+# Call Business Central API
 function Invoke-BCAPI {
     param($Uri, $Token)
     Invoke-RestMethod -Method Get -Uri $Uri -Headers @{ Authorization = "Bearer $Token" }
 }
 
+# Upload local file to FTP
 function Upload-FTP {
     param($LocalFile, $RemoteFile)
     $webclient = New-Object System.Net.WebClient
@@ -74,36 +77,40 @@ function Upload-FTP {
     $webclient.UploadFile($uri, $LocalFile)
 }
 
-# --- Hovedlogik ---
+# ===============================
+# Main Logic
+# ===============================
+
+# Get access token
 $Token = (Get-AccessToken -ClientID $ClientID -ClientSecret $ClientSecret).access_token
 
-# Hent første company
+# Retrieve first company
 $Company = Invoke-BCAPI -Uri "$BaseUrl/companies" -Token $Token
 $CompanyId = $Company.value[0].id
 Write-Host "First companyID: $CompanyId"
 
-# Hent extensions
+# Retrieve installed extensions
 $Extensions = Invoke-BCAPI -Uri "$ExtensionUrl/companies($CompanyId)/extensions" -Token $Token
 
-# Rens og formater CSV direkte i memory
+# Format CSV in memory
 $Date = Get-Date -Format "yyyy-MM-dd HH:mm"
 $CsvData = $Extensions.value | ForEach-Object {
     [PSCustomObject]@{
-        APPName      = $_.displayName
+        AppName      = $_.displayName
         Publisher    = $_.publisher
         Version      = "$($_.versionMajor).$($_.versionMinor).$($_.versionBuild).$($_.versionRevision)"
         IsInstalled  = $_.isInstalled
-        publishedAs  = $_.publishedAs
-        packageId    = $_.id
+        PublishedAs  = $_.publishedAs
+        PackageId    = $_.id
         CustomerName = $CustomerName
         Environment  = $Environment
         DateTime     = $Date
     }
-} | Sort-Object Publisher, APPName
+} | Sort-Object Publisher, AppName
 
 $CsvFile = "$Path\$CustomerName.$Environment.csv"
 
-# Eksporter CSV med komma og citater omkring alle felter
+# Export CSV with commas and quotes
 $CsvData | Export-Csv -Path $CsvFile -NoTypeInformation -Delimiter ',' -Force -Encoding UTF8
 
 # FTP upload

@@ -1,21 +1,48 @@
-# ===============================
-# App Registrations Export Script
-# ===============================
+<#
+AppRegistrations.ps1
+
+Exports all Microsoft Graph App Registrations for a given tenant,
+including secret expiry information, and uploads to FTP.
+
+--------------------------------------
+GitHub Actions configuration:
+
+Variables (non-sensitive):
+- CLIENT_ID
+- CLIENT_SECRET
+- TENANT_ID
+- CUSTOMER_NAME
+- RUN_APPREGISTRATIONS (true/false)
+
+--------------------------------------
+Permissions required in Azure AD (mandatory!):
+- Microsoft Graph
+- Application.Read.All
+
+--------------------------------------
+Script parameters:
+- ClientID
+- ClientSecret
+- TenantId
+- CustomerName
+
+Usage:
+- Typically executed from GitHub Actions if RUN_APPREGISTRATIONS=true
+- Output CSV file: %TEMP%\AppRegistrations.csv
+- FTP upload included
+
+#>
 
 param (
-    [Parameter(Mandatory=$true)]
-    [string]$ClientID,
-
-    [Parameter(Mandatory=$true)]
-    [string]$ClientSecret,
-
-    [Parameter(Mandatory=$true)]
-    [string]$TenantId,
-
-    [Parameter(Mandatory=$true)]
-    [string]$CustomerName
+    [Parameter(Mandatory=$true)][string]$ClientID,
+    [Parameter(Mandatory=$true)][string]$ClientSecret,
+    [Parameter(Mandatory=$true)][string]$TenantId,
+    [Parameter(Mandatory=$true)][string]$CustomerName
 )
 
+# ===============================
+# Constants
+# ===============================
 $FtpUrl  = "ftp://13.80.26.17/${CustomerName}_AllApps.txt"
 
 # ===============================
@@ -30,10 +57,10 @@ Connect-MgGraph `
     -NoWelcome
 
 # ===============================
-# Get all app registrations
+# Retrieve all app registrations
 # ===============================
 $apps = Get-MgApplication -All
-$now = Get-Date
+$now  = Get-Date
 
 $allAppsWithExpiry = foreach ($app in $apps) {
     if ($app.PasswordCredentials -and $app.PasswordCredentials.Count -gt 0) {
@@ -62,20 +89,11 @@ $allAppsWithExpiry = foreach ($app in $apps) {
 # ===============================
 function Upload-AppRegistrationsToFtp {
     param(
-        [Parameter(Mandatory = $true)]
-        [array]$Apps,
-
-        [Parameter(Mandatory = $true)]
-        [string]$TenantId,
-
-        [Parameter(Mandatory = $true)]
-        [string]$FtpUrl,
-
-        [Parameter(Mandatory = $true)]
-        [string]$FTPuser,
-
-        [Parameter(Mandatory = $true)]
-        [string]$FTPpass
+        [Parameter(Mandatory=$true)][array]$Apps,
+        [Parameter(Mandatory=$true)][string]$TenantId,
+        [Parameter(Mandatory=$true)][string]$FtpUrl,
+        [Parameter(Mandatory=$true)][string]$FTPuser,
+        [Parameter(Mandatory=$true)][string]$FTPpass
     )
 
     if (-not $Apps -or $Apps.Count -eq 0) {
@@ -83,12 +101,12 @@ function Upload-AppRegistrationsToFtp {
         return
     }
 
-    # Semikolon-separeret CSV-indhold
+    # Create semicolon-separated CSV
     $localFile = Join-Path $env:TEMP "AppRegistrations.csv"
     $Apps | Select-Object AppName, AppId, CreatedDate, Expiry, DaysLeft |
         Export-Csv -Path $localFile -NoTypeInformation -Delimiter ';' -Encoding UTF8
 
-    # Tilføj TenantId som første linje
+    # Add TenantId as first line
     $csvLines = Get-Content $localFile
     $csvLines = @("TenantId=$TenantId") + $csvLines
     Set-Content -Path $localFile -Value $csvLines -Encoding UTF8
