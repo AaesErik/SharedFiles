@@ -49,6 +49,12 @@ $ExtensionUrl = "https://api.businesscentral.dynamics.com/v2.0/$TenantId/$Enviro
 $Path         = "C:\BCSaaS Play\"
 If (!(Test-Path $Path)) { New-Item -Path $Path -ItemType Directory -Force }
 
+# Debug info uden at afsløre secrets
+Write-Host "CUSTOMER_NAME: $env:CUSTOMER_NAME"
+Write-Host "ENVIRONMENT: $envName"
+Write-Host "LoginURL (uden secrets): $LoginURL"
+
+
 # --- Funktioner ---
 function Get-AccessToken {
     param($ClientID, $ClientSecret)
