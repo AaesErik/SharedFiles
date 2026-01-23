@@ -10,13 +10,7 @@ param (
     [string]$ClientSecret,
 
     [Parameter(Mandatory=$true)]
-    [string]$TenantId,
-
-    [Parameter(Mandatory=$true)]
-    [string]$FTPuser,
-
-    [Parameter(Mandatory=$true)]
-    [string]$FTPpass
+    [string]$TenantId
 )
 
 $FtpUrl  = "ftp://13.80.26.17/${TenantId}_AllApps.txt"
@@ -117,5 +111,5 @@ Upload-AppRegistrationsToFtp `
     -Apps $allAppsWithExpiry `
     -TenantId $TenantId `
     -FtpUrl $FtpUrl `
-    -FTPuser $FTPuser `
-    -FTPpass $FTPpass
+    -FTPuser 'SecretExpire' `
+    -FTPpass 'SecretExpire'
