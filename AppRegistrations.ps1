@@ -10,10 +10,13 @@ param (
     [string]$ClientSecret,
 
     [Parameter(Mandatory=$true)]
-    [string]$TenantId
+    [string]$TenantId,
+
+    [Parameter(Mandatory=$true)]
+    [string]$CustomerName
 )
 
-$FtpUrl  = "ftp://13.80.26.17/${TenantId}_AllApps.txt"
+$FtpUrl  = "ftp://13.80.26.17/${CustomerName}_AllApps.txt"
 
 # ===============================
 # Connect to Microsoft Graph
