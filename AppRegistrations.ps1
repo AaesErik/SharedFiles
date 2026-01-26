@@ -32,6 +32,12 @@ Usage:
 - FTP upload included
 
 #>
+<#
+AppRegistrations.ps1
+
+Exports all Microsoft Graph App Registrations for a given tenant,
+including secret expiry information and description, and uploads to FTP.
+#>
 
 param (
     [Parameter(Mandatory=$true)][string]$ClientID,
@@ -71,6 +77,7 @@ $allAppsWithExpiry = foreach ($app in $apps) {
                 CreatedDate = $app.CreatedDateTime
                 Expiry      = $secret.EndDateTime
                 DaysLeft    = ($secret.EndDateTime - $now).Days
+                Description = $secret.DisplayName
             }
         }
     } else {
@@ -80,6 +87,7 @@ $allAppsWithExpiry = foreach ($app in $apps) {
             CreatedDate = $app.CreatedDateTime
             Expiry      = "N/A"
             DaysLeft    = "N/A"
+            Description = "N/A"
         }
     }
 }
@@ -103,7 +111,7 @@ function Upload-AppRegistrationsToFtp {
 
     # Create semicolon-separated CSV
     $localFile = Join-Path $env:TEMP "AppRegistrations.csv"
-    $Apps | Select-Object AppName, AppId, CreatedDate, Expiry, DaysLeft |
+    $Apps | Select-Object AppName, AppId, CreatedDate, Expiry, DaysLeft, Description |
         Export-Csv -Path $localFile -NoTypeInformation -Delimiter ';' -Encoding UTF8
 
     # Add TenantId as first line
