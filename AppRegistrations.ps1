@@ -134,7 +134,7 @@ function Upload-AppRegistrationsToFtp {
         Remove-Item $localFile -ErrorAction SilentlyContinue
     }
 }
-
+Write-Host $allAppsWithExpiry
 # ===============================
 # Execute Upload
 # ===============================
