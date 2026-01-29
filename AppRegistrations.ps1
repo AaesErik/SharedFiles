@@ -72,22 +72,24 @@ $allAppsWithExpiry = foreach ($app in $apps) {
     if ($app.PasswordCredentials -and $app.PasswordCredentials.Count -gt 0) {
         foreach ($secret in $app.PasswordCredentials) {
             [PSCustomObject]@{
-                AppName     = $app.DisplayName
-                AppId       = $app.AppId
-                CreatedDate = $app.CreatedDateTime
-                Expiry      = $secret.EndDateTime
-                DaysLeft    = ($secret.EndDateTime - $now).Days
-                Description = $secret.DisplayName
+                AppName        = $app.DisplayName
+                AppId          = $app.AppId
+                AppDesctiption = $app.DisplayName
+                CreatedDate    = $app.CreatedDateTime
+                Expiry         = $secret.EndDateTime
+                DaysLeft       = ($secret.EndDateTime - $now).Days
+                Description    = $secret.DisplayName
             }
         }
     } else {
         [PSCustomObject]@{
-            AppName     = $app.DisplayName
-            AppId       = $app.AppId
-            CreatedDate = $app.CreatedDateTime
-            Expiry      = "N/A"
-            DaysLeft    = "N/A"
-            Description = "N/A"
+            AppName        = $app.DisplayName
+            AppId          = $app.AppId
+            AppDesctiption = $app.DisplayName
+            CreatedDate    = $app.CreatedDateTime
+            Expiry         = "N/A"
+            DaysLeft       = "N/A"
+            Description    = "N/A"
         }
     }
 }
