@@ -113,7 +113,7 @@ function Upload-AppRegistrationsToFtp {
 
     # Create semicolon-separated CSV
     $localFile = Join-Path $env:TEMP "AppRegistrations.csv"
-    $Apps | Select-Object AppName, AppId, CreatedDate, Expiry, DaysLeft, Description |
+    $Apps | Select-Object AppName, AppId, AppDescription, CreatedDate, Expiry, DaysLeft, Description |
         Export-Csv -Path $localFile -NoTypeInformation -Delimiter ';' -Encoding UTF8
 
     # Add TenantId as first line
