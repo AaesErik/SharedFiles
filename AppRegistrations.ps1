@@ -74,7 +74,7 @@ $allAppsWithExpiry = foreach ($app in $apps) {
             [PSCustomObject]@{
                 AppName        = $app.DisplayName
                 AppId          = $app.AppId
-                AppDesctiption = $app.DisplayName
+                AppDescription = $app.Description
                 CreatedDate    = $app.CreatedDateTime
                 Expiry         = $secret.EndDateTime
                 DaysLeft       = ($secret.EndDateTime - $now).Days
@@ -85,7 +85,7 @@ $allAppsWithExpiry = foreach ($app in $apps) {
         [PSCustomObject]@{
             AppName        = $app.DisplayName
             AppId          = $app.AppId
-            AppDesctiption = $app.DisplayName
+            AppDescription = $app.Description
             CreatedDate    = $app.CreatedDateTime
             Expiry         = "N/A"
             DaysLeft       = "N/A"
